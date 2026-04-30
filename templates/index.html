@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WanderMind — AI Travel Intelligence</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body class="landing-body">
+  <div class="stars"></div>
+
+  <nav class="nav">
+    <div class="nav-logo">✦ WanderMind</div>
+    <div class="nav-links">
+      <a href="/planner">Plan</a>
+      <a href="/research">Research</a>
+      <a href="/compare">Compare</a>
+      <a href="/budget">Budget</a>
+      <a href="/packing">Packing</a>
+      <a href="/chat">Chat</a>
+      <a href="/trips">My Trips</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span></span>Ollama · Firecrawl · Memento<span></span>
+    </div>
+    <h1 class="hero-title">
+      <span>Explore the World</span>
+      <em>with Intelligence</em>
+    </h1>
+    <p class="hero-sub">
+      AI-crafted travel plans powered by real-time web data, adaptive memory,
+      and six intelligent tools that learn from every journey you plan.
+    </p>
+    <div class="hero-cta">
+      <a href="/planner" class="btn-gold">Plan My Trip ✈</a>
+      <a href="/research" class="btn-outline">Research a Destination</a>
+    </div>
+
+    <!-- Animated World Map -->
+    <div class="hero-map">
+      <svg class="map-svg" viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="900" height="400" fill="rgba(26,74,74,0.06)" rx="18"/>
+        <!-- Grid -->
+        <line x1="0" y1="200" x2="900" y2="200" class="grid-line"/>
+        <line x1="450" y1="0" x2="450" y2="400" class="grid-line"/>
+        <line x1="0" y1="100" x2="900" y2="100" class="grid-line" stroke-dasharray="3,9"/>
+        <line x1="0" y1="300" x2="900" y2="300" class="grid-line" stroke-dasharray="3,9"/>
+        <line x1="225" y1="0" x2="225" y2="400" class="grid-line" stroke-dasharray="3,9"/>
+        <line x1="675" y1="0" x2="675" y2="400" class="grid-line" stroke-dasharray="3,9"/>
+        <!-- North America -->
+        <path d="M100,70 C130,58 195,62 225,85 C255,108 262,145 252,172 C242,198 218,210 196,207 C168,202 138,196 115,174 C88,150 85,92 100,70Z"
+              class="continent" opacity="0.65"/>
+        <!-- South America -->
+        <path d="M190,228 C212,218 242,228 248,255 C254,282 244,334 228,360 C214,382 192,378 175,358 C158,338 152,296 157,268 C162,245 172,236 190,228Z"
+              class="continent" opacity="0.65"/>
+        <!-- Europe -->
+        <path d="M385,55 C412,50 442,62 448,82 C454,102 444,124 422,130 C400,136 372,126 365,105 C358,86 365,60 385,55Z"
+              class="continent" opacity="0.65"/>
+        <!-- Africa -->
+        <path d="M385,148 C418,138 452,153 462,185 C472,217 468,283 452,320 C436,350 405,355 382,340 C356,320 350,272 353,232 C357,196 358,156 385,148Z"
+              class="continent" opacity="0.65"/>
+        <!-- Asia -->
+        <path d="M468,50 C535,40 648,46 688,72 C728,98 738,140 726,172 C714,202 682,218 638,218 C586,218 526,202 486,176 C450,154 440,118 444,88 C448,65 455,56 468,50Z"
+              class="continent" opacity="0.65"/>
+        <!-- South-East Asia islands (simplified) -->
+        <ellipse cx="700" cy="240" rx="30" ry="16" class="continent" opacity="0.5"/>
+        <ellipse cx="740" cy="258" rx="22" ry="12" class="continent" opacity="0.4"/>
+        <!-- Australia -->
+        <path d="M655,265 C698,256 748,267 758,298 C768,330 752,368 720,375 C688,380 654,365 640,338 C624,308 626,273 655,265Z"
+              class="continent" opacity="0.65"/>
+        <!-- New Zealand -->
+        <ellipse cx="800" cy="340" rx="12" ry="22" class="continent" opacity="0.4"/>
+        <!-- Japan -->
+        <ellipse cx="760" cy="120" rx="14" ry="28" class="continent" opacity="0.45" transform="rotate(-20,760,120)"/>
+        <!-- UK/Ireland -->
+        <ellipse cx="360" cy="68" rx="12" ry="16" class="continent" opacity="0.5"/>
+        <!-- Iceland -->
+        <ellipse cx="290" cy="48" rx="18" ry="10" class="continent" opacity="0.35"/>
+
+        <!-- Flight arc: NY → Tokyo -->
+        <path id="mainArc" d="M155,120 Q450,20 760,120" class="flight-arc"/>
+        <!-- Location dots -->
+        <circle id="dotA" cx="155" cy="120" r="4" class="location-dot"/>
+        <circle id="dotB" cx="760" cy="120" r="4" class="location-dot" style="animation-delay:0.6s"/>
+        <!-- Animated plane -->
+        <text id="mapPlane" x="155" y="120" class="plane-icon" text-anchor="middle" dominant-baseline="middle">✈</text>
+        <!-- City labels -->
+        <text x="140" y="136" font-size="8" fill="rgba(201,168,76,0.7)" font-family="Outfit, sans-serif" letter-spacing="1">NYC</text>
+        <text x="748" y="136" font-size="8" fill="rgba(201,168,76,0.7)" font-family="Outfit, sans-serif" letter-spacing="1">TYO</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <h2 class="features-title">Six Intelligent Travel <em>Tools</em></h2>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🗺️</div>
+        <h3>Travel Plan Generator</h3>
+        <p>Day-by-day itineraries powered by Firecrawl web data and Ollama — personalised to your budget, interests, and memory.</p>
+        <a href="/planner">Plan a Trip →</a>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔍</div>
+        <h3>Destination Research</h3>
+        <p>Deep-dive profiles on any destination. Firecrawl scrapes WikiVoyage, Wikivoyage and Numbeo for real-time cost and travel data.</p>
+        <a href="/research">Research Now →</a>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚖️</div>
+        <h3>Destination Comparator</h3>
+        <p>Can't decide? Compare two destinations side-by-side across cost, vibe, experiences, and your personal fit.</p>
+        <a href="/compare">Compare →</a>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💰</div>
+        <h3>Budget Optimizer</h3>
+        <p>Smart budget breakdown with allocation advice, money-saving tips, free activities, and value-for-money scoring.</p>
+        <a href="/budget">Optimise Budget →</a>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎒</div>
+        <h3>Smart Packing List</h3>
+        <p>AI-generated packing lists tailored to your destination, season, activities, and travel style. Interactive checklist included.</p>
+        <a href="/packing">Generate List →</a>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <h3>AI Chat Assistant</h3>
+        <p>Ask anything — visa info, safety tips, hidden gems, local customs. Powered by Ollama with your travel memory as context.</p>
+        <a href="/chat">Start Chatting →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Memory highlight -->
+  <section style="padding:0 5vw 6rem; position:relative; z-index:1;">
+    <div style="max-width:900px; margin:0 auto; padding:2.5rem 3rem; background:var(--surface); border:1px solid var(--border-2); border-radius:var(--r-lg); display:flex; gap:2.5rem; align-items:center; flex-wrap:wrap;">
+      <div style="font-size:3rem;">🧠</div>
+      <div style="flex:1; min-width:260px;">
+        <div class="eyebrow">Memento Memory Layer</div>
+        <h3 style="font-family:var(--ff-display); font-size:1.5rem; font-weight:500; margin-bottom:.6rem;">Gets Smarter Every Trip</h3>
+        <p style="font-size:.88rem; color:var(--text-2); line-height:1.7;">The Memento design pattern stores snapshots of your preferences — budget, interests, travel style, visited places — and injects them as context into every AI call, making every recommendation feel personally crafted.</p>
+      </div>
+      <a href="/trips" class="btn-outline">View My Memory →</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>WanderMind © 2025 · Ollama · Firecrawl · Memento · Flask</p>
+  </footer>
+
+  <script src="/static/js/script.js"></script>
+  <script>
+    // Animate plane along arc
+    const arcPath = document.getElementById('mainArc');
+    const plane   = document.getElementById('mapPlane');
+    if (arcPath && plane) {
+      let t = 0;
+      const totalLen = arcPath.getTotalLength ? arcPath.getTotalLength() : 605;
+      function animPlane() {
+        t = (t + 0.0018) % 1;
+        const pt  = arcPath.getPointAtLength(t * totalLen);
+        const pt2 = arcPath.getPointAtLength(Math.min((t + 0.012), 1) * totalLen);
+        const ang = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI;
+        plane.setAttribute('x', pt.x);
+        plane.setAttribute('y', pt.y);
+        plane.setAttribute('transform', `rotate(${ang}, ${pt.x}, ${pt.y})`);
+        requestAnimationFrame(animPlane);
+      }
+      requestAnimationFrame(animPlane);
+    }
+  </script>
+</body>
+</html>

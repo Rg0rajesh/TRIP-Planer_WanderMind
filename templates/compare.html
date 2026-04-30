@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compare Destinations — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare" class="active">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="eyebrow">Feature 3 of 6</div>
+    <h1>Compare <em>Destinations</em></h1>
+    <p>Can't decide? Let Ollama do a deep comparison of two destinations based on your budget, interests, and travel style from Memento memory.</p>
+  </div>
+
+  <div class="card" style="padding:2rem;max-width:780px;">
+    <div class="compare-form-grid">
+      <div class="form-group" style="margin:0">
+        <label>Destination A</label>
+        <input type="text" id="destA" placeholder="e.g. Bali, Indonesia"/>
+      </div>
+      <div class="compare-vs">vs</div>
+      <div class="form-group" style="margin:0">
+        <label>Destination B</label>
+        <input type="text" id="destB" placeholder="e.g. Phuket, Thailand"/>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1.25rem;">
+      <div class="form-group" style="margin:0">
+        <label>Budget (USD)</label>
+        <input type="number" id="cmpBudget" placeholder="2000" min="100"/>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Duration (days)</label>
+        <input type="number" id="cmpDuration" placeholder="7" min="1"/>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Interests</label>
+        <input type="text" id="cmpInterests" placeholder="beaches, food, culture…"/>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <button class="btn-gold" onclick="doCompare()">⚖️ Compare Now</button>
+    </div>
+  </div>
+
+  <div id="cmpLoading" style="display:none;padding:3rem 0;text-align:center;">
+    <div style="font-size:3rem;animation:spin 2s linear infinite;">⚖️</div>
+    <div style="font-family:var(--ff-display);font-style:italic;color:var(--gold);margin-top:1rem;">Ollama is weighing up your options…</div>
+  </div>
+  <div id="cmpError" style="display:none;margin-top:2rem;max-width:600px;"><div class="error-box" id="cmpErrMsg"></div></div>
+  <div id="cmpResult" class="compare-result" style="display:none;"></div>
+</div>
+
+<footer class="footer"><p>WanderMind © 2025</p></footer>
+<script>
+async function doCompare() {
+  const a = document.getElementById('destA').value.trim();
+  const b = document.getElementById('destB').value.trim();
+  if (!a||!b) { alert('Enter both destinations.'); return; }
+  document.getElementById('cmpResult').style.display='none';
+  document.getElementById('cmpError').style.display='none';
+  document.getElementById('cmpLoading').style.display='block';
+  try {
+    const res = await fetch('/api/compare',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({dest_a:a,dest_b:b,budget:document.getElementById('cmpBudget').value||2000,
+        duration:document.getElementById('cmpDuration').value||7,
+        interests:document.getElementById('cmpInterests').value||'general travel'})});
+    const data = await res.json();
+    document.getElementById('cmpLoading').style.display='none';
+    if(!res.ok||data.error) throw new Error(data.error);
+    renderCompare(data.comparison);
+  } catch(err) {
+    document.getElementById('cmpLoading').style.display='none';
+    document.getElementById('cmpError').style.display='block';
+    document.getElementById('cmpErrMsg').textContent='⚠ '+err.message;
+  }
+}
+
+function renderCompare(c) {
+  const el = document.getElementById('cmpResult');
+  const dA = c.destinations?.a || {};
+  const dB = c.destinations?.b || {};
+  el.innerHTML = `
+    <div class="recommend-banner">
+      <div class="recommend-banner-icon">🏆</div>
+      <div>
+        <h3>Recommendation: ${c.winner||'Tie'}</h3>
+        <p>${c.recommendation||c.summary||''}</p>
+      </div>
+    </div>
+    <div class="compare-cards">
+      <div class="card" style="padding:2rem">
+        ${c.winner===dA.name?'<div class="compare-winner-badge">✓ Recommended</div>':''}
+        <div class="compare-dest-name">${dA.name||''}</div>
+        <div class="compare-dest-tagline">${dA.tagline||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:.25rem;"><strong style="color:var(--text);">Best for:</strong> ${dA.best_for||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:.25rem;"><strong style="color:var(--text);">Est. cost:</strong> ${dA.estimated_cost_usd||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:1rem;"><strong style="color:var(--text);">Vibe:</strong> ${dA.vibe||''}</div>
+        <div class="pros-cons">
+          <div class="pros"><h4>Pros</h4><ul>${(dA.pros||[]).map(p=>`<li>${p}</li>`).join('')}</ul></div>
+          <div class="cons"><h4>Cons</h4><ul>${(dA.cons||[]).map(c=>`<li>${c}</li>`).join('')}</ul></div>
+        </div>
+      </div>
+      <div class="card" style="padding:2rem">
+        ${c.winner===dB.name?'<div class="compare-winner-badge">✓ Recommended</div>':''}
+        <div class="compare-dest-name">${dB.name||''}</div>
+        <div class="compare-dest-tagline">${dB.tagline||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:.25rem;"><strong style="color:var(--text);">Best for:</strong> ${dB.best_for||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:.25rem;"><strong style="color:var(--text);">Est. cost:</strong> ${dB.estimated_cost_usd||''}</div>
+        <div style="font-size:.82rem;color:var(--text-2);margin-bottom:1rem;"><strong style="color:var(--text);">Vibe:</strong> ${dB.vibe||''}</div>
+        <div class="pros-cons">
+          <div class="pros"><h4>Pros</h4><ul>${(dB.pros||[]).map(p=>`<li>${p}</li>`).join('')}</ul></div>
+          <div class="cons"><h4>Cons</h4><ul>${(dB.cons||[]).map(c=>`<li>${c}</li>`).join('')}</ul></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-head">📊 Side-by-Side Comparison</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Category</th><th>${dA.name||'Dest A'}</th><th>${dB.name||'Dest B'}</th></tr></thead>
+        <tbody>${(c.comparison_table||[]).map(r=>`<tr><td>${r.category}</td><td>${r.dest_a}</td><td>${r.dest_b}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+      <a href="/planner" class="btn-gold">Plan the Winner ✈</a>
+    </div>
+  `;
+  el.style.display='block';
+}
+</script>
+</body>
+</html>

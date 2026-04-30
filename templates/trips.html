@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Trips & Memory — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat">Chat</a>
+    <a href="/trips" class="active">My Trips</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="eyebrow">Memento Memory Layer</div>
+    <h1>My Trips &amp; <em>Memory</em></h1>
+    <p>Your Memento caretaker stores snapshots of every preference update and trip plan. Edit your profile to improve future AI recommendations.</p>
+  </div>
+
+  <!-- Profile editor -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2.5rem;">
+    <div class="card" style="padding:2rem;">
+      <div class="section-head" style="margin-top:0;">👤 Your Profile</div>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="profName" placeholder="Your name"/>
+      </div>
+      <div class="form-group">
+        <label>Home City</label>
+        <input type="text" id="profCity" placeholder="Mumbai, India"/>
+      </div>
+      <div class="form-group">
+        <label>Typical Budget</label>
+        <input type="text" id="profBudget" placeholder="e.g. $2000–$3000 per trip"/>
+      </div>
+      <div class="form-group">
+        <label>Travel Style</label>
+        <select id="profStyle">
+          <option value="">— Select —</option>
+          <option value="budget">🎒 Budget</option>
+          <option value="comfort">✈ Comfort</option>
+          <option value="luxury">💎 Luxury</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Dietary Preferences (comma-separated)</label>
+        <input type="text" id="profDietary" placeholder="vegetarian, no seafood…"/>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+        <button class="btn-gold" onclick="saveProfile()">💾 Save Profile</button>
+        <span id="saveMsg" style="font-size:.82rem;color:#4CAF7A;align-self:center;display:none;">✓ Saved!</span>
+      </div>
+    </div>
+
+    <!-- Memory snapshot history -->
+    <div class="card" style="padding:2rem;">
+      <div class="section-head" style="margin-top:0;">🕐 Memento Snapshot History</div>
+      <p style="font-size:.8rem;color:var(--text-3);margin-bottom:1rem;">Each action creates an immutable snapshot. The Memento caretaker manages up to 50 history states.</p>
+      <div class="history-list" id="historyList">
+        <div style="font-size:.82rem;color:var(--text-3);">Loading…</div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;gap:.75rem;">
+        <button class="btn-ghost" style="font-size:.75rem;" onclick="clearMemory()">🗑 Clear All Memory</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Planned trips -->
+  <div class="section-head">✈ Planned Trips</div>
+  <div id="tripsGrid" class="trips-grid">
+    <div style="font-size:.88rem;color:var(--text-3);">Loading your trips…</div>
+  </div>
+
+  <!-- Preferences summary -->
+  <div class="section-head" style="margin-top:2.5rem;">🧠 Current Memory Context</div>
+  <div class="card" style="padding:1.5rem;max-width:700px;">
+    <p style="font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:.75rem;">
+      This is injected into every Ollama API call as personalisation context:
+    </p>
+    <pre id="memCtx" style="font-size:.82rem;color:var(--text-2);line-height:1.7;white-space:pre-wrap;font-family:var(--ff-body);">Loading…</pre>
+  </div>
+</div>
+
+<footer class="footer"><p>WanderMind © 2025</p></footer>
+
+<script>
+async function loadMemory() {
+  try {
+    const res  = await fetch('/api/memory');
+    const data = await res.json();
+    renderProfile(data.profile || {});
+    renderHistory(data.history || []);
+    renderTrips(data.trips || []);
+    // Build context summary from profile
+    const p = data.profile || {};
+    const parts = [];
+    if (p.home_city)           parts.push(`Home city: ${p.home_city}`);
+    if (p.budget_preference)   parts.push(`Typical budget: ${p.budget_preference}`);
+    if ((p.interests||[]).length) parts.push(`Interests: ${p.interests.join(', ')}`);
+    if (p.travel_style)        parts.push(`Travel style: ${p.travel_style}`);
+    if ((p.dietary_preferences||[]).length) parts.push(`Dietary: ${p.dietary_preferences.join(', ')}`);
+    if ((p.visited_destinations||[]).length) parts.push(`Planned destinations: ${p.visited_destinations.slice(-5).join(', ')}`);
+    document.getElementById('memCtx').textContent = parts.length ? parts.join('\n') : 'No preferences stored yet. Plan a trip to build your memory!';
+  } catch(e) {
+    document.getElementById('memCtx').textContent = 'Error loading memory.';
+  }
+}
+
+function renderProfile(p) {
+  document.getElementById('profName').value   = p.name || '';
+  document.getElementById('profCity').value   = p.home_city || '';
+  document.getElementById('profBudget').value = p.budget_preference || '';
+  document.getElementById('profStyle').value  = p.travel_style || '';
+  document.getElementById('profDietary').value= (p.dietary_preferences||[]).join(', ');
+}
+
+function renderHistory(history) {
+  const el = document.getElementById('historyList');
+  if (!history.length) {
+    el.innerHTML = '<div style="font-size:.82rem;color:var(--text-3);">No snapshots yet — plan a trip to start!</div>';
+    return;
+  }
+  el.innerHTML = history.slice(0, 12).map(h => `
+    <div class="history-item">
+      <span class="history-label">${h.label || 'snapshot'}</span>
+      <span class="history-time">${new Date(h.timestamp).toLocaleString([], {dateStyle:'short',timeStyle:'short'})}</span>
+    </div>`).join('');
+}
+
+function renderTrips(trips) {
+  const el = document.getElementById('tripsGrid');
+  if (!trips.length) {
+    el.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-3);">
+        <div style="font-size:3rem;margin-bottom:1rem;">🗺️</div>
+        <p>No trips planned yet.</p>
+        <a href="/planner" class="btn-gold" style="display:inline-flex;margin-top:1rem;">Plan Your First Trip ✈</a>
+      </div>`;
+    return;
+  }
+  el.innerHTML = [...trips].reverse().map(t => `
+    <div class="trip-card">
+      <div class="trip-dest">${t.destination || '?'}</div>
+      <div class="trip-meta">
+        From ${t.origin||'?'} · ${t.duration||'?'} days · $${t.budget||'?'} budget
+        ${t.saved_at ? ' · ' + new Date(t.saved_at).toLocaleDateString() : ''}
+      </div>
+      ${(t.interests||'').split(',').filter(Boolean).slice(0,4).map(i=>`<span class="trip-tag">${i.trim()}</span>`).join('')}
+      ${t.travel_style ? `<span class="trip-tag">${t.travel_style}</span>` : ''}
+    </div>`).join('');
+}
+
+async function saveProfile() {
+  const dietary = document.getElementById('profDietary').value
+    .split(',').map(s=>s.trim()).filter(Boolean);
+  const payload = {
+    name:             document.getElementById('profName').value.trim(),
+    home_city:        document.getElementById('profCity').value.trim(),
+    budget_preference:document.getElementById('profBudget').value.trim(),
+    travel_style:     document.getElementById('profStyle').value,
+    dietary_preferences: dietary,
+  };
+  try {
+    await fetch('/api/memory/profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const msg = document.getElementById('saveMsg');
+    msg.style.display = 'inline';
+    setTimeout(()=>{ msg.style.display='none'; loadMemory(); }, 1800);
+  } catch(e) { alert('Save failed: '+e.message); }
+}
+
+async function clearMemory() {
+  if (!confirm('Clear all Memento memory? This cannot be undone.')) return;
+  await fetch('/api/memory/clear',{method:'POST'});
+  loadMemory();
+}
+
+loadMemory();
+</script>
+</body>
+</html>

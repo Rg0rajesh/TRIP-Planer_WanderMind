@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plan a Trip — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner" class="active">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="planner-grid">
+    <!-- Aside -->
+    <div class="planner-aside">
+      <div class="eyebrow">Feature 1 of 6</div>
+      <h2>Plan your<br/><em>perfect trip</em></h2>
+      <p>Firecrawl collects live destination data from WikiVoyage and travel guides. Ollama synthesises it into a personalised day-by-day itinerary. Your Memento memory makes every plan smarter.</p>
+      <div style="margin-top:1.5rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md);">
+        <div style="font-size:.72rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--text-3); margin-bottom:.75rem;">How It Works</div>
+        <div style="display:flex; flex-direction:column; gap:.65rem;">
+          <div style="display:flex; gap:.75rem; align-items:flex-start; font-size:.82rem; color:var(--text-2);">
+            <span style="color:var(--gold); font-weight:600; flex-shrink:0;">1.</span>Firecrawl scrapes travel websites for real-time data
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:flex-start; font-size:.82rem; color:var(--text-2);">
+            <span style="color:var(--gold); font-weight:600; flex-shrink:0;">2.</span>Memento loads your preferences and past trips
+          </div>
+          <div style="display:flex; gap:.75rem; align-items:flex-start; font-size:.82rem; color:var(--text-2);">
+            <span style="color:var(--gold); font-weight:600; flex-shrink:0;">3.</span>Ollama generates your custom day-by-day plan
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="card planner-card">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+      <div id="plannerForm">
+        <!-- Step 1 -->
+        <div class="form-step active" data-step="1">
+          <div class="step-title">📍 Journey Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>From (Origin)</label>
+              <input type="text" id="origin" placeholder="New York, USA"/>
+            </div>
+            <div class="form-group">
+              <label>To (Destination)</label>
+              <input type="text" id="destination" placeholder="Tokyo, Japan"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Total Budget (USD)</label>
+              <input type="number" id="budget" placeholder="2500" min="100"/>
+            </div>
+            <div class="form-group">
+              <label>Duration (days)</label>
+              <input type="number" id="duration" placeholder="7" min="1" max="60"/>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn-gold" onclick="nextStep(2)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step" data-step="2">
+          <div class="step-title">🎯 Interests & Style</div>
+          <div class="form-group">
+            <label>Select Your Interests</label>
+            <div class="interests-wrap" id="interestChips">
+              <label class="chip"><input type="checkbox" value="culture & history"/> 🏛 Culture</label>
+              <label class="chip"><input type="checkbox" value="food & cuisine"/> 🍜 Food</label>
+              <label class="chip"><input type="checkbox" value="adventure & outdoors"/> 🏔 Adventure</label>
+              <label class="chip"><input type="checkbox" value="beaches & relaxation"/> 🏖 Beaches</label>
+              <label class="chip"><input type="checkbox" value="art & museums"/> 🎨 Art</label>
+              <label class="chip"><input type="checkbox" value="nightlife"/> 🎶 Nightlife</label>
+              <label class="chip"><input type="checkbox" value="shopping"/> 🛍 Shopping</label>
+              <label class="chip"><input type="checkbox" value="nature & wildlife"/> 🌿 Nature</label>
+              <label class="chip"><input type="checkbox" value="photography"/> 📸 Photo Spots</label>
+              <label class="chip"><input type="checkbox" value="temples & spirituality"/> 🕌 Temples</label>
+              <label class="chip"><input type="checkbox" value="local markets"/> 🏪 Markets</label>
+              <label class="chip"><input type="checkbox" value="sports & fitness"/> 🏃 Sports</label>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:1rem">
+            <label>Travel Style</label>
+            <select id="travelStyle">
+              <option value="budget">🎒 Budget — hostels, street food, free activities</option>
+              <option value="comfort" selected>✈ Comfort — mid-range hotels, local restaurants</option>
+              <option value="luxury">💎 Luxury — 5-star hotels, fine dining</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Extra Notes (optional)</label>
+            <input type="text" id="extraNotes" placeholder="e.g. travelling with kids, vegetarian, anniversary trip…"/>
+          </div>
+          <div class="step-actions">
+            <button class="btn-ghost" onclick="prevStep(1)">← Back</button>
+            <button class="btn-gold" onclick="submitPlan()" id="submitBtn">✨ Generate Itinerary</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingState" class="loading-overlay">
+        <div class="loading-globe">🌍</div>
+        <div class="loading-text">Crafting your perfect journey…</div>
+        <div class="loading-bar"></div>
+        <div class="loading-steps" id="loadingSteps">
+          <div class="loading-step active" id="ls1">🕸 Firecrawl scraping live travel data…</div>
+          <div class="loading-step" id="ls2">🧠 Loading your Memento preferences…</div>
+          <div class="loading-step" id="ls3">✨ Ollama generating your itinerary…</div>
+          <div class="loading-step" id="ls4">💾 Saving to memory…</div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="errorState" style="display:none; padding:2rem;">
+        <div class="error-box" id="errorMsg"></div>
+        <div style="margin-top:1rem; display:flex; gap:.75rem;">
+          <button class="btn-ghost" onclick="resetForm()">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/script.js"></script>
+<script>
+let step = 1;
+document.querySelectorAll('.interests-wrap .chip input').forEach(cb => {
+  cb.addEventListener('change', function(){
+    this.closest('.chip').classList.toggle('on', this.checked);
+  });
+});
+
+function nextStep(n) {
+  if (step === 1) {
+    if (!document.getElementById('origin').value.trim() ||
+        !document.getElementById('destination').value.trim() ||
+        !document.getElementById('budget').value ||
+        !document.getElementById('duration').value) {
+      document.querySelectorAll('[data-step="1"] input').forEach(i=>{
+        if(!i.value.trim()) { i.classList.add('shake'); setTimeout(()=>i.classList.remove('shake'),500); }
+      });
+      return;
+    }
+  }
+  document.querySelector(`[data-step="${step}"]`).classList.remove('active');
+  step = n;
+  document.querySelector(`[data-step="${step}"]`).classList.add('active');
+  document.getElementById('progressFill').style.width = ((step-1) * 50) + '%';
+}
+function prevStep(n) {
+  document.querySelector(`[data-step="${step}"]`).classList.remove('active');
+  step = n;
+  document.querySelector(`[data-step="${step}"]`).classList.add('active');
+  document.getElementById('progressFill').style.width = ((step-1) * 50) + '%';
+}
+
+function animateLoadingSteps() {
+  const steps = ['ls1','ls2','ls3','ls4'];
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < steps.length) {
+      document.querySelectorAll('.loading-step').forEach(s=>s.classList.remove('active'));
+      document.getElementById(steps[i]).classList.add('active');
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 2000);
+}
+
+async function submitPlan() {
+  const interests = [...document.querySelectorAll('.interests-wrap input:checked')].map(c=>c.value);
+  const extra = document.getElementById('extraNotes').value.trim();
+  const interestStr = [...interests, ...(extra ? [extra] : [])].join(', ') || 'general travel';
+
+  const payload = {
+    origin: document.getElementById('origin').value.trim(),
+    destination: document.getElementById('destination').value.trim(),
+    budget: document.getElementById('budget').value,
+    duration: document.getElementById('duration').value,
+    interests: interestStr,
+    travel_style: document.getElementById('travelStyle').value,
+  };
+
+  document.getElementById('plannerForm').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'flex';
+  document.getElementById('progressFill').style.width = '100%';
+  animateLoadingSteps();
+
+  try {
+    const res = await fetch('/api/plan', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || 'Unknown error');
+    sessionStorage.setItem('travelPlan', JSON.stringify(data.plan));
+    sessionStorage.setItem('travelOrigin', data.origin);
+    sessionStorage.setItem('travelDestination', data.destination);
+    sessionStorage.setItem('firecrawlStatus', data.firecrawl_status ? 'live' : 'fallback');
+    window.location.href = '/result';
+  } catch(err) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMsg').textContent = '⚠ ' + err.message;
+  }
+}
+function resetForm() {
+  document.getElementById('errorState').style.display = 'none';
+  document.getElementById('plannerForm').style.display = 'block';
+}
+</script>
+</body>
+</html>

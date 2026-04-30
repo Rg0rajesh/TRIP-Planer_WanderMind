@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Itinerary — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div id="noData" style="display:none; padding:10rem 5vw; text-align:center;">
+  <div style="font-size:3rem; margin-bottom:1rem;">🗺️</div>
+  <h2 style="font-family:var(--ff-display); color:var(--text); margin-bottom:.75rem;">No plan found</h2>
+  <p style="color:var(--text-2); margin-bottom:2rem;">Please generate a trip plan first.</p>
+  <a href="/planner" class="btn-gold">Plan a Trip</a>
+</div>
+
+<div id="planContent">
+  <!-- Hero -->
+  <div class="result-hero-band">
+    <div class="result-route" id="routeLine"></div>
+    <div class="result-dest-title" id="destTitle"></div>
+    <p class="result-overview" id="planOverview"></p>
+    <div style="display:flex; gap:1rem; margin-top:1.25rem; flex-wrap:wrap; align-items:center;">
+      <span id="fcStatus"></span>
+      <span id="highlightTags"></span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="result-stats" id="resultStats"></div>
+
+  <!-- Flight strip -->
+  <div class="flight-strip">
+    <svg class="flight-strip-svg" viewBox="0 0 800 50" preserveAspectRatio="none">
+      <path id="stripArc" d="M20,25 Q400,5 780,25" fill="none"
+            stroke="rgba(201,168,76,0.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+      <circle cx="20" cy="25" r="4" fill="var(--gold)"/>
+      <circle cx="780" cy="25" r="4" fill="var(--gold)"/>
+      <text id="stripPlane" x="20" y="25" font-size="16" text-anchor="middle"
+            dominant-baseline="middle" style="filter:drop-shadow(0 0 5px rgba(201,168,76,.7))">✈</text>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:.25rem .5rem .5rem;">
+      <span id="stripOrig">Origin</span><span id="stripDest">Destination</span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="result-body">
+    <!-- Sidebar -->
+    <aside id="resultSidebar"></aside>
+
+    <!-- Main -->
+    <main>
+      <div class="section-label">Day-by-Day Itinerary</div>
+      <div id="dayCards"></div>
+    </main>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;padding:2rem 5vw 4rem;">
+    <a href="/planner" class="btn-ghost">← New Trip</a>
+    <a href="/chat" class="btn-outline">Chat with AI</a>
+    <a href="/packing" class="btn-outline">Packing List 🎒</a>
+    <button class="btn-ghost" onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<footer class="footer"><p>WanderMind © 2025</p></footer>
+
+<script>
+const plan   = JSON.parse(sessionStorage.getItem('travelPlan') || 'null');
+const origin = sessionStorage.getItem('travelOrigin') || '';
+const dest   = sessionStorage.getItem('travelDestination') || '';
+const fcStat = sessionStorage.getItem('firecrawlStatus') || 'fallback';
+
+if (!plan) {
+  document.getElementById('noData').style.display = 'block';
+  document.getElementById('planContent').style.display = 'none';
+} else {
+  renderPlan(plan, origin, dest);
+}
+
+function renderPlan(p, orig, dst) {
+  // Route + title
+  document.getElementById('routeLine').textContent = `${orig} → ${dst}`;
+  document.getElementById('destTitle').textContent  = p.destination || dst;
+  document.getElementById('planOverview').textContent = p.overview || '';
+
+  // Firecrawl status
+  document.getElementById('fcStatus').innerHTML = fcStat === 'live'
+    ? '<span class="status-badge status-live">● Firecrawl Live Data</span>'
+    : '<span class="status-badge status-fallback">◌ AI Knowledge Only</span>';
+
+  // Highlights
+  if ((p.highlights||[]).length) {
+    document.getElementById('highlightTags').innerHTML =
+      p.highlights.slice(0,3).map(h=>`<span class="tag">${h}</span>`).join('');
+  }
+
+  // Stats
+  document.getElementById('resultStats').innerHTML = `
+    <div class="rstat"><span class="rstat-val">${p.duration||'—'}</span><span class="rstat-label">Days</span></div>
+    <div class="rstat"><span class="rstat-val">${p.total_budget_usd||'—'}</span><span class="rstat-label">Budget</span></div>
+    <div class="rstat"><span class="rstat-val">${(p.days||[]).length}</span><span class="rstat-label">Days Planned</span></div>
+    <div class="rstat"><span class="rstat-val">${(p.top_attractions||[]).length}</span><span class="rstat-label">Attractions</span></div>
+  `;
+
+  // Strip
+  document.getElementById('stripOrig').textContent = orig;
+  document.getElementById('stripDest').textContent  = dst;
+  animStrip();
+
+  // Sidebar
+  const pi = p.practical_info || {};
+  const bb = p.budget_breakdown || {};
+  document.getElementById('resultSidebar').innerHTML = `
+    <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+      <div class="section-head" style="margin-top:0">🏆 Top Attractions</div>
+      <ul class="sidebar-list">${(p.top_attractions||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+    </div>
+    <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+      <div class="section-head" style="margin-top:0">🍽 Food Guide</div>
+      <ul class="sidebar-list">${(p.food_guide||[]).map(f=>`<li>${f}</li>`).join('')}</ul>
+    </div>
+    <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+      <div class="section-head" style="margin-top:0">💰 Budget Breakdown</div>
+      ${Object.entries(bb).map(([k,v])=>`
+        <div class="budget-bar-row" style="display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;">
+          <span class="budget-bar-label" style="width:110px;font-size:.75rem;color:var(--text-2);">${k}</span>
+          <div class="budget-bar-track" style="flex:1;height:5px;background:var(--bg-3);border-radius:5px;overflow:hidden;">
+            <div class="budget-bar-fill" style="height:100%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));width:${Math.random()*50+20}%"></div>
+          </div>
+          <span style="font-size:.78rem;color:var(--gold);width:70px;text-align:right;">${v}</span>
+        </div>`).join('')}
+    </div>
+    <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+      <div class="section-head" style="margin-top:0">ℹ Practical Info</div>
+      <div class="info-grid">
+        ${[['Best Time', pi.best_time],['Currency', pi.currency],['Language', pi.language],['Visa', pi.visa],['Transport', pi.transport]].filter(([,v])=>v).map(([k,v])=>`<div class="info-item"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
+      </div>
+    </div>
+    ${(p.safety_tips||[]).length ? `
+    <div class="card" style="padding:1.5rem;">
+      <div class="section-head" style="margin-top:0">🛡 Safety Tips</div>
+      <ul class="sidebar-list">${p.safety_tips.map(s=>`<li>${s}</li>`).join('')}</ul>
+    </div>` : ''}
+  `;
+
+  // Day cards
+  const container = document.getElementById('dayCards');
+  (p.days||[]).forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.style.animationDelay = `${i * 0.06}s`;
+    card.innerHTML = `
+      <div class="day-header">
+        <span class="day-num">Day ${d.day}</span>
+        <span class="day-theme">${d.theme||''}</span>
+        <span style="font-size:.72rem;color:var(--text-3);">${d.accommodation||''}</span>
+      </div>
+      <div class="day-body">
+        ${['morning','afternoon','evening'].map(t=>`
+          <div class="time-block">
+            <span class="time-label">${t==='morning'?'🌅 Morning':t==='afternoon'?'☀️ Afternoon':'🌙 Evening'}</span>
+            <div class="time-activity">${d[t]?.activity||'—'}</div>
+            ${d[t]?.tip?`<div style="font-size:.75rem;color:var(--text-3);margin-top:.35rem;font-style:italic;">${d[t].tip}</div>`:''}
+            ${d[t]?.cost_usd?`<span class="time-cost">${d[t].cost_usd}</span>`:''}
+          </div>`).join('')}
+      </div>
+      ${(d.local_food||d.daily_budget_usd)?`
+      <div class="day-footer">
+        ${d.local_food?`<span>🍜 ${d.local_food}</span>`:''}
+        ${d.daily_budget_usd?`<span>💵 Est. ${d.daily_budget_usd}/day</span>`:''}
+      </div>`:''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function animStrip() {
+  const path = document.getElementById('stripArc');
+  const plane = document.getElementById('stripPlane');
+  const len = path.getTotalLength ? path.getTotalLength() : 760;
+  let t = 0;
+  function frame() {
+    t = (t + 0.003) % 1;
+    const pt = path.getPointAtLength(t * len);
+    const pt2 = path.getPointAtLength(Math.min((t+0.01),1) * len);
+    plane.setAttribute('x', pt.x);
+    plane.setAttribute('y', pt.y);
+    const ang = Math.atan2(pt2.y-pt.y, pt2.x-pt.x) * 180 / Math.PI;
+    plane.setAttribute('transform', `rotate(${ang},${pt.x},${pt.y})`);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

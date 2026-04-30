@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Optimizer — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget" class="active">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="eyebrow">Feature 4 of 6</div>
+    <h1>Budget <em>Optimizer</em></h1>
+    <p>Smart budget allocation with category breakdowns, money-saving tips, free activities, and a value-for-money score — powered by Ollama.</p>
+  </div>
+
+  <div class="card" style="padding:2rem;max-width:640px;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Destination</label>
+        <input type="text" id="budgDest" placeholder="Tokyo, Japan"/>
+      </div>
+      <div class="form-group">
+        <label>Total Budget (USD)</label>
+        <input type="number" id="budgTotal" placeholder="2500" min="100"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Duration (days)</label>
+        <input type="number" id="budgDuration" placeholder="7" min="1"/>
+      </div>
+      <div class="form-group">
+        <label>Travel Style</label>
+        <select id="budgStyle">
+          <option value="budget">🎒 Budget</option>
+          <option value="comfort" selected>✈ Comfort</option>
+          <option value="luxury">💎 Luxury</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Your Priorities (select all that apply)</label>
+      <div class="priority-chips" id="priorityChips">
+        <label class="chip"><input type="checkbox" value="accommodation"/> 🏨 Accommodation</label>
+        <label class="chip"><input type="checkbox" value="fine dining"/> 🍽 Fine Dining</label>
+        <label class="chip"><input type="checkbox" value="activities"/> 🎯 Activities</label>
+        <label class="chip"><input type="checkbox" value="shopping"/> 🛍 Shopping</label>
+        <label class="chip"><input type="checkbox" value="nightlife"/> 🎶 Nightlife</label>
+        <label class="chip"><input type="checkbox" value="transport"/> 🚆 Transport</label>
+        <label class="chip"><input type="checkbox" value="spa & wellness"/> 🧘 Wellness</label>
+      </div>
+    </div>
+    <button class="btn-gold" onclick="doBudget()">💰 Optimise My Budget</button>
+  </div>
+
+  <div id="budgLoading" style="display:none;padding:3rem 0;text-align:center;">
+    <div style="font-size:3rem;animation:spin 2s linear infinite;">💰</div>
+    <div style="font-family:var(--ff-display);font-style:italic;color:var(--gold);margin-top:1rem;">Optimising your budget with Ollama…</div>
+  </div>
+  <div id="budgError" style="display:none;margin-top:2rem;max-width:600px;"><div class="error-box" id="budgErrMsg"></div></div>
+  <div id="budgResult" class="budget-result" style="display:none;"></div>
+</div>
+
+<footer class="footer"><p>WanderMind © 2025</p></footer>
+<script>
+document.querySelectorAll('.priority-chips .chip input').forEach(cb=>{
+  cb.addEventListener('change',function(){ this.closest('.chip').classList.toggle('on',this.checked); });
+});
+
+async function doBudget() {
+  const dest = document.getElementById('budgDest').value.trim();
+  const budget = document.getElementById('budgTotal').value;
+  if(!dest||!budget){ alert('Enter destination and budget.'); return; }
+  document.getElementById('budgResult').style.display='none';
+  document.getElementById('budgError').style.display='none';
+  document.getElementById('budgLoading').style.display='block';
+  const priorities = [...document.querySelectorAll('.priority-chips input:checked')].map(c=>c.value);
+  try {
+    const res = await fetch('/api/budget',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({destination:dest,total_budget:budget,
+        duration:document.getElementById('budgDuration').value||7,
+        travel_style:document.getElementById('budgStyle').value,priorities})});
+    const data = await res.json();
+    document.getElementById('budgLoading').style.display='none';
+    if(!res.ok||data.error) throw new Error(data.error);
+    renderBudget(data.budget);
+  } catch(err) {
+    document.getElementById('budgLoading').style.display='none';
+    document.getElementById('budgError').style.display='block';
+    document.getElementById('budgErrMsg').textContent='⚠ '+err.message;
+  }
+}
+
+function renderBudget(b) {
+  const el = document.getElementById('budgResult');
+  const sc = b.score||{};
+  el.innerHTML = `
+    <div class="budget-summary">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="eyebrow">${b.destination||''}</div>
+          <div class="budget-total">$${b.total_budget_usd||'—'}</div>
+          <div class="budget-daily">≈ $${b.daily_budget_usd||'—'} per day</div>
+          <p class="budget-overview-text">${b.summary||''}</p>
+        </div>
+        <div class="score-row">
+          <div class="score-item"><div class="score-val">${sc.value_for_money||'—'}<span style="font-size:1rem;color:var(--text-3);">/10</span></div><div class="score-label">Value</div></div>
+          <div class="score-item"><div class="score-val">${sc.affordability||'—'}<span style="font-size:1rem;color:var(--text-3);">/10</span></div><div class="score-label">Affordability</div></div>
+          <div class="score-item"><div class="score-val">${sc.experience_quality||'—'}<span style="font-size:1rem;color:var(--text-3);">/10</span></div><div class="score-label">Experience</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">📊 Budget Breakdown</div>
+    <div class="breakdown-grid">
+      ${(b.breakdown||[]).map(item=>`
+        <div class="breakdown-item">
+          <div class="breakdown-icon">${item.icon||'💰'}</div>
+          <div class="breakdown-info">
+            <div class="breakdown-name">${item.category||''}</div>
+            <div class="breakdown-bar-track"><div class="breakdown-bar-fill" style="width:${item.percentage||0}%"></div></div>
+            <div class="breakdown-tip">${item.tips||''}</div>
+          </div>
+          <div>
+            <div class="breakdown-amt">$${item.amount_usd||0}</div>
+            <div class="breakdown-pct">${item.percentage||0}%</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;">
+      <div>
+        <div class="section-head" style="margin-top:0">💡 Money-Saving Tips</div>
+        <ul class="sidebar-list">${(b.money_saving_tips||[]).map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+      <div>
+        <div class="section-head" style="margin-top:0">🆓 Free Activities</div>
+        <ul class="sidebar-list">${(b.free_activities||[]).map(a=>`<li>${a}</li>`).join('')}</ul>
+      </div>
+      <div>
+        <div class="section-head" style="margin-top:0">⚠ Hidden Costs</div>
+        <ul class="sidebar-list">${(b.hidden_costs||[]).map(c=>`<li>${c}</li>`).join('')}</ul>
+      </div>
+    </div>
+    ${b.currency_tips?`<div style="margin-top:1.5rem;padding:1.25rem;background:rgba(201,168,76,.06);border:1px solid var(--border-2);border-radius:var(--r-md);font-size:.85rem;color:var(--text-2);">💱 ${b.currency_tips}</div>`:''}
+    <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+      <a href="/planner" class="btn-gold">Plan This Trip ✈</a>
+    </div>
+  `;
+  el.style.display='block';
+}
+</script>
+</body>
+</html>

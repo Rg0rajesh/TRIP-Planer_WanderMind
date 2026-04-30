@@ -1,0 +1,237 @@
+{
+  "current_state": {
+    "name": "",
+    "budget_preference": "25000",
+    "interests": [
+      "culture & history",
+      "food & cuisine",
+      "adventure & outdoors",
+      "beaches & relaxation",
+      "nightlife"
+    ],
+    "home_city": "Guntur",
+    "visited_destinations": [
+      "Goa"
+    ],
+    "planned_trips": [
+      {
+        "destination": "Goa",
+        "origin": "Guntur",
+        "budget": "25000",
+        "duration": "8",
+        "interests": "culture & history, adventure & outdoors, beaches & relaxation, nightlife",
+        "saved_at": "2026-04-18T09:12:00.285852"
+      },
+      {
+        "destination": "Goa",
+        "origin": "Guntur",
+        "budget": "25000",
+        "duration": "8",
+        "interests": "culture & history, food & cuisine, adventure & outdoors, beaches & relaxation, nightlife",
+        "saved_at": "2026-04-18T09:17:00.274470"
+      }
+    ],
+    "chat_context": [
+      {
+        "role": "user",
+        "content": "best time to visit goa",
+        "ts": "2026-04-18T09:21:23.487757"
+      },
+      {
+        "role": "assistant",
+        "content": "Goa is a popular destination known for its vibrant festivals and enchanting landscapes. During the cooler months in Goa (June-August), it's ideal for exploring the coastal area, especially during the Chamarra Festival, which typically takes place from 13th to 20th of July.\n\nDuring this time, you can take advantage of the beautiful weather conditions with a few days off from the busy tourist season. The island of Goa itself is bustling but not too crowded, making it an ideal spot for adventure seekers and casual tourists alike.\n\nFor those looking to explore further inland, the northern part of the state offers more secluded beaches that are less frequented by tourists. Additionally, the city of Aneka (which means \"all kinds\") in the southern region is a great place to relax with its diverse array of beaches and bustling markets.\n\nIf you're visiting Goa for an extended period, the city of Cal\u00e7ada de Pimenta (on the outskirts) can also be a convenient base. This area offers a mix of colonial architecture, beachside spots, and scenic views that are worth exploring during your trip to Goa.\n\nRemember, each year has its own unique attractions and festivals in Goa, so don't be afraid to plan ahead for the best experiences.",
+        "ts": "2026-04-18T09:21:23.491170"
+      },
+      {
+        "role": "user",
+        "content": "hyderabad",
+        "ts": "2026-04-22T11:47:55.090405"
+      },
+      {
+        "role": "assistant",
+        "content": "Hyderabad is a vibrant city known for its rich history and diverse cultural scene. It's often referred to as the \"cradle of Indian independence\" because it played a significant role in the Indian Independence Movement.\n\nOne of the highlights of Hyderabad lies in its bustling streets, with many modern developments that are home to various restaurants, cafes, and shops. The city is also renowned for its vibrant culture, with numerous festivals and events that bring together people from all over India.\n\nThe city offers a mix of old and new, with a blend of traditional architecture and modern buildings. Many areas offer a unique glimpse into Hyderabad's rich heritage, including the Aadi Arts Festival, which showcases contemporary Indian art in the city.\n\nIf you're planning to visit Hyderabad for its natural beauty or for its scenic views, it can be quite challenging due to its busy nature. However, if you enjoy exploring lesser-known spots and want to experience a more serene environment, Hyderabad might not be your top choice.\n\nHyderabad is famous for its food, with a mix of Indian, Pakistani, and other regional cuisines. The city's cuisine often includes a blend of these flavors with the traditional dishes that are prepared in many restaurants throughout the area.\n\nIf you're interested in visiting this historic city for its historical significance or architecture, Hyderabad could be an ideal destination. However, if you're looking for a more relaxed experience and want to explore lesser-known spots, Bangalore might be your best option.",
+        "ts": "2026-04-22T11:47:55.097224"
+      },
+      {
+        "role": "user",
+        "content": "Must-try foods in Vietnam",
+        "ts": "2026-04-22T11:48:48.014838"
+      },
+      {
+        "role": "assistant",
+        "content": "Vietnam is known for its variety of delicious flavors and dishes, which are often a highlight of any trip there. Here are some must-try foods that you might enjoy exploring:\n\n1. Noodle Pho: Known as \"rice noodles,\" this is a popular dish that originated from the northern part of Vietnam. It's typically served with spicy and sweet ingredients like chicken, shrimp, or tofu.\n\n2. Pha Maa: Also known as \"sugar cake, \" this is a traditional Vietnamese dessert consisting of layers of pho (ph\u1edf) and a sticky sponge base made of condensed milk.\n\n3. Ngon Nhat (Cannoli): A sweet pastry filled with condensed milk, eggs, and walnuts that is a popular treat in Vietnam.\n\n4. C\u00e0 T\u00f4: This is a rich and spicy dish made from ground chicken or duck meat, served with noodles, rice, or quinoa.\n\n5. L\u00e8 Gom: Also known as \"noodle soup,\" this is typically enjoyed with grilled fish or shrimp.\n\n6. Ho Kinh (Vietnamese BBQ): A popular dish that features lean cuts of beef seasoned with salt and sometimes garlic, topped with onions, ginger, and a few drops of soy sauce.\n\n7. Tom Yum Tung: Another spicy food made from ground pork with a twist of chili pepper, served in a bun with eggplant filling.\n\n8. Hoi An Watermelons: These are soft, melty fruits that are often enjoyed as an afternoon treat while enjoying the serene views of the city.\n\n9. C\u00e0 R\u1ed1t (Vietnamese pizza): A light and airy pizza made from thin sheets of bread filled with various toppings such as cheese, ham, or prosciutto.\n\n10. Lactose-Free B\u00e1nh M\u00e3 T\u00f9ng: This is a rice-based dough that can be served with various fillings like shrimp, vegetables, or tofu, depending on your preference and the flavors available in the local market.\n\nVietnamese cuisine offers a wide range of dishes that are not only delicious but also offer a unique cultural experience. Enjoy exploring these dishes as you visit Vietnam!",
+        "ts": "2026-04-22T11:48:48.019485"
+      },
+      {
+        "role": "user",
+        "content": "Best time to visit Kyoto?",
+        "ts": "2026-04-30T20:18:35.060454"
+      },
+      {
+        "role": "assistant",
+        "content": "Kyoto is renowned for its serene ambiance, rich history, and exquisite architecture. Depending on your interests, there's no single best time of year to visit the city, but each season offers unique attractions.\n\nIn summer (June-September), Kyoto's temperatures are pleasant with a mild breeze, making it a great time to explore the temples, gardens, and parks. This period is also a popular time for sightseeing and cultural activities such as visiting the famous Fushimi Inari Tsumekan Shrine, where thousands of vermilion torii gates line the route from its main entrance.\n\nAutumn (November-December) can be beautiful with cool weather and golden leaves that cover the city's streets. During this season, Kyoto becomes a haven for those who enjoy scenic views and cherry blossoms. Many visitors opt to visit the Yoyogi Park in central Kyoto or visit Kinkaku-ji, known as the Golden Pavilion, to appreciate the serene beauty of autumn.\n\nIn spring (March-April), Kyoto is often described as \"beautiful,\" with flowers blooming in abundance across its gardens and parks. This season also brings pleasant temperatures and a sense of freshness that makes it ideal for outdoor activities such as walking along the Rikyu Bridge or visiting Kinkaku-ji.\n\nSpring is especially popular among young people who love to explore Kyoto's charming old streets, which are lined with shops selling traditional textiles, food stalls offering local delicacies, and unique clothing stores. Additionally, many visitors enjoy visits to various temples and shrines during this time to visit the Higashi Nijo and Gion temples.\n\nIf you're planning a trip in June-September or late autumn, it's ideal for exploring Kyoto's temples, parks, and gardens under the blue sky. However, if you prefer cooler temperatures, spring is great for enjoying the city's serene atmosphere with its many cherry blossom viewing spots.\n\nRemember to check local weather conditions and tourist advisories before planning your trip as it can change from season to season.",
+        "ts": "2026-04-30T20:18:35.067034"
+      },
+      {
+        "role": "user",
+        "content": "Must-try foods in Vietnam",
+        "ts": "2026-04-30T20:19:06.039752"
+      },
+      {
+        "role": "assistant",
+        "content": "Vietnam offers a diverse culinary scene that caters to various tastes, with each region or district having its own unique dishes. Here are some must-try foods across the country:\n\n1. Noodle Pho: A staple of Vietnamese cuisine, this dish consists of noodles served with meat-based or vegetarian fillings.\n\n2. Tom Yum Tung (Cannoli): A rich pastry filled with condensed milk and a sweet filling like eggs, almonds, or raisins.\n\n3. Hoi An Watermelons: Soft, melty fruits that are often enjoyed as an afternoon snack while enjoying the serene views of the city.\n\n4. Lactose-Free B\u00e1nh M\u00e3 T\u00f9ng: Rice-based dough made from thin sheets filled with various fillings such as shrimp, vegetables, or tofu, and served in a bun.\n\n5. Pha Maa (Sugar Cake): A traditional Vietnamese dessert consisting of layers of pho (ph\u1edf) and a sticky sponge base made of condensed milk.\n\n6. C\u00e0 R\u1ed1t (Vietnamese Pizza): A light and airy pizza filled with various toppings such as cheese, ham, or prosciutto.\n\n7. Ngon Nhat (Cannoli): Another spicy food made from ground chicken or duck meat topped with noodles, rice, or quinoa.\n\n8. Hoi An Watermelons: Soft, melty fruits that are often enjoyed as an afternoon snack while enjoying the serene views of the city.\n\n9. C\u00e0 T\u00f4: A rich and spicy dish made from ground chicken or duck meat seasoned with salt and sometimes garlic, served in a bun with eggplant filling.\n\n10. Ho Kinh (Vietnamese BBQ): A popular dish that features lean cuts of beef seasoned with salt and sometimes garlic, topped with onions, ginger, and a few drops of soy sauce.\n\nThese dishes showcase the diverse flavors and cooking styles across Vietnam. Each region has its own unique food culture, making it a fantastic destination for adventurous gastronomes in the country!\n\nPlease note that the culinary scene can change from season to season, so checking local weather conditions is crucial when planning your trip.",
+        "ts": "2026-04-30T20:19:06.043035"
+      }
+    ],
+    "preferred_duration": "",
+    "travel_style": "comfort",
+    "dietary_preferences": [],
+    "created_at": "2026-04-18T09:09:35.002145"
+  },
+  "history": [
+    {
+      "state": {
+        "name": "",
+        "budget_preference": "",
+        "interests": [],
+        "home_city": "",
+        "visited_destinations": [
+          "Goa"
+        ],
+        "planned_trips": [
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:12:00.285852"
+          }
+        ],
+        "chat_context": [],
+        "preferred_duration": "",
+        "travel_style": "",
+        "dietary_preferences": [],
+        "created_at": "2026-04-18T09:09:35.002145"
+      },
+      "timestamp": "2026-04-18T09:12:00.285963",
+      "label": "trip-Goa"
+    },
+    {
+      "state": {
+        "name": "",
+        "budget_preference": "25000",
+        "interests": [
+          "culture & history",
+          "adventure & outdoors",
+          "beaches & relaxation",
+          "nightlife"
+        ],
+        "home_city": "Guntur",
+        "visited_destinations": [
+          "Goa"
+        ],
+        "planned_trips": [
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:12:00.285852"
+          }
+        ],
+        "chat_context": [],
+        "preferred_duration": "",
+        "travel_style": "comfort",
+        "dietary_preferences": [],
+        "created_at": "2026-04-18T09:09:35.002145"
+      },
+      "timestamp": "2026-04-18T09:12:00.288465",
+      "label": "profile-update"
+    },
+    {
+      "state": {
+        "name": "",
+        "budget_preference": "25000",
+        "interests": [
+          "culture & history",
+          "adventure & outdoors",
+          "beaches & relaxation",
+          "nightlife"
+        ],
+        "home_city": "Guntur",
+        "visited_destinations": [
+          "Goa"
+        ],
+        "planned_trips": [
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:12:00.285852"
+          },
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, food & cuisine, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:17:00.274470"
+          }
+        ],
+        "chat_context": [],
+        "preferred_duration": "",
+        "travel_style": "comfort",
+        "dietary_preferences": [],
+        "created_at": "2026-04-18T09:09:35.002145"
+      },
+      "timestamp": "2026-04-18T09:17:00.274599",
+      "label": "trip-Goa"
+    },
+    {
+      "state": {
+        "name": "",
+        "budget_preference": "25000",
+        "interests": [
+          "culture & history",
+          "food & cuisine",
+          "adventure & outdoors",
+          "beaches & relaxation",
+          "nightlife"
+        ],
+        "home_city": "Guntur",
+        "visited_destinations": [
+          "Goa"
+        ],
+        "planned_trips": [
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:12:00.285852"
+          },
+          {
+            "destination": "Goa",
+            "origin": "Guntur",
+            "budget": "25000",
+            "duration": "8",
+            "interests": "culture & history, food & cuisine, adventure & outdoors, beaches & relaxation, nightlife",
+            "saved_at": "2026-04-18T09:17:00.274470"
+          }
+        ],
+        "chat_context": [],
+        "preferred_duration": "",
+        "travel_style": "comfort",
+        "dietary_preferences": [],
+        "created_at": "2026-04-18T09:09:35.002145"
+      },
+      "timestamp": "2026-04-18T09:17:00.279220",
+      "label": "profile-update"
+    }
+  ]
+}

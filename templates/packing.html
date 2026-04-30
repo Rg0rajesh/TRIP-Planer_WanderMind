@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Packing List — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing" class="active">Packing</a><a href="/chat">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="eyebrow">Feature 5 of 6</div>
+    <h1>Smart <em>Packing List</em></h1>
+    <p>AI-generated packing lists tailored to your destination, season, activities, and travel style. Interactive checklist you can tick off as you pack.</p>
+  </div>
+
+  <div class="card" style="padding:2rem;max-width:640px;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Destination</label>
+        <input type="text" id="packDest" placeholder="Bali, Indonesia"/>
+      </div>
+      <div class="form-group">
+        <label>Duration (days)</label>
+        <input type="number" id="packDuration" placeholder="10" min="1"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Season / Weather</label>
+        <select id="packSeason">
+          <option value="tropical / hot & humid">☀️ Tropical / Hot & Humid</option>
+          <option value="summer / warm">🌤 Summer / Warm</option>
+          <option value="spring / mild">🌸 Spring / Mild</option>
+          <option value="autumn / cool">🍂 Autumn / Cool</option>
+          <option value="winter / cold">❄️ Winter / Cold</option>
+          <option value="rainy season">🌧 Rainy Season</option>
+          <option value="mixed / variable">🌦 Mixed / Variable</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Travel Style</label>
+        <select id="packStyle">
+          <option value="budget backpacker">🎒 Budget Backpacker</option>
+          <option value="comfort traveller" selected>✈ Comfort Traveller</option>
+          <option value="business traveller">💼 Business Traveller</option>
+          <option value="luxury traveller">💎 Luxury Traveller</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Planned Activities</label>
+      <input type="text" id="packActivities" placeholder="hiking, beach, temples, fine dining, scuba diving…"/>
+    </div>
+    <button class="btn-gold" onclick="doPacking()">🎒 Generate Packing List</button>
+  </div>
+
+  <div id="packLoading" style="display:none;padding:3rem 0;text-align:center;">
+    <div style="font-size:3rem;animation:spin 1.5s linear infinite;">🎒</div>
+    <div style="font-family:var(--ff-display);font-style:italic;color:var(--gold);margin-top:1rem;">Packing your virtual bag…</div>
+  </div>
+  <div id="packError" style="display:none;margin-top:2rem;max-width:600px;"><div class="error-box" id="packErrMsg"></div></div>
+  <div id="packResult" class="packing-result" style="display:none;"></div>
+</div>
+
+<footer class="footer"><p>WanderMind © 2025</p></footer>
+<script>
+async function doPacking() {
+  const dest = document.getElementById('packDest').value.trim();
+  if(!dest){ document.getElementById('packDest').classList.add('shake'); setTimeout(()=>document.getElementById('packDest').classList.remove('shake'),500); return; }
+  document.getElementById('packResult').style.display='none';
+  document.getElementById('packError').style.display='none';
+  document.getElementById('packLoading').style.display='block';
+  try {
+    const res = await fetch('/api/packing',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({destination:dest,duration:document.getElementById('packDuration').value||7,
+        season:document.getElementById('packSeason').value,
+        travel_style:document.getElementById('packStyle').value,
+        activities:document.getElementById('packActivities').value||'general sightseeing'})});
+    const data = await res.json();
+    document.getElementById('packLoading').style.display='none';
+    if(!res.ok||data.error) throw new Error(data.error);
+    renderPacking(data.packing);
+  } catch(err) {
+    document.getElementById('packLoading').style.display='none';
+    document.getElementById('packError').style.display='block';
+    document.getElementById('packErrMsg').textContent='⚠ '+err.message;
+  }
+}
+
+function renderPacking(p) {
+  const el = document.getElementById('packResult');
+  const checked = {count:0, total:0};
+  el.innerHTML = `
+    <div class="packing-stats">
+      <div class="pstat"><span class="pstat-val">${p.total_items||'—'}</span><span class="pstat-label">Total Items</span></div>
+      <div class="pstat"><span class="pstat-val" id="checkedCount">0</span><span class="pstat-label">Packed</span></div>
+      <div class="pstat"><span class="pstat-val">${(p.categories||[]).length}</span><span class="pstat-label">Categories</span></div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+      <div style="flex:1;min-width:240px;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:.4rem;">Bag Size Guide</div>
+        <div style="font-size:.85rem;color:var(--text-2);">${p.size_guide||'—'}</div>
+      </div>
+      <div style="flex:1;min-width:240px;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);">
+        <div style="font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:.4rem;">Airline Tips</div>
+        <div style="font-size:.85rem;color:var(--text-2);">${p.airline_tips||'—'}</div>
+      </div>
+    </div>
+    <div class="packing-categories" id="packCats"></div>
+    ${(p.destination_specific||[]).length ? `
+    <div class="section-head" style="margin-top:2rem;">📍 Destination-Specific Essentials</div>
+    <div class="tag-cloud">${p.destination_specific.map(i=>`<span class="tag">${i}</span>`).join('')}</div>` : ''}
+    ${(p.things_to_leave_behind||[]).length ? `
+    <div class="section-head">🚫 Leave These Behind</div>
+    <div class="tag-cloud">${p.things_to_leave_behind.map(i=>`<span class="tag" style="border-color:rgba(224,112,112,.3);color:#E07070;">${i}</span>`).join('')}</div>` : ''}
+  `;
+
+  // Render categories
+  const catsEl = document.getElementById('packCats');
+  (p.categories||[]).forEach(cat=>{
+    const div = document.createElement('div');
+    div.className = 'packing-cat';
+    div.innerHTML = `
+      <div class="packing-cat-header">
+        <span class="packing-cat-icon">${cat.icon||'📦'}</span>
+        <span class="packing-cat-name">${cat.name||''}</span>
+        <span style="margin-left:auto;font-size:.72rem;color:var(--text-3);">${(cat.items||[]).length} items</span>
+      </div>
+      ${(cat.items||[]).map(item=>`
+        <div class="packing-item">
+          <div class="packing-check" onclick="toggleCheck(this)"></div>
+          <div class="packing-item-content">
+            <div class="packing-item-name">
+              ${item.item||''}
+              ${item.essential?'<span class="essential-badge">Essential</span>':''}
+            </div>
+            ${item.quantity?`<div class="packing-item-qty">Qty: ${item.quantity}</div>`:''}
+            ${item.tip?`<div class="packing-item-tip">${item.tip}</div>`:''}
+          </div>
+        </div>`).join('')}
+    `;
+    catsEl.appendChild(div);
+  });
+  el.style.display='block';
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const total = document.querySelectorAll('.packing-check').length;
+  const done  = document.querySelectorAll('.packing-check.checked').length;
+  const cc = document.getElementById('checkedCount');
+  if(cc) cc.textContent = done;
+}
+</script>
+</body>
+</html>

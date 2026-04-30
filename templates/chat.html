@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chat — WanderMind</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">✦ WanderMind</a>
+  <div class="nav-links">
+    <a href="/planner">Plan</a><a href="/research">Research</a>
+    <a href="/compare">Compare</a><a href="/budget">Budget</a>
+    <a href="/packing">Packing</a><a href="/chat" class="active">Chat</a><a href="/trips">My Trips</a>
+  </div>
+</nav>
+
+<div class="chat-layout">
+  <!-- Sidebar -->
+  <div class="chat-sidebar-panel">
+    <h2>AI Travel<br/><em>Assistant</em></h2>
+    <p>Ask me anything — visas, packing, safety, food, culture, costs, hidden gems. I remember your travel preferences from Memento.</p>
+    <div>
+      <div class="quick-label">Quick Prompts</div>
+      <button class="quick-btn" onclick="sendQuick(this)">Best time to visit Kyoto?</button>
+      <button class="quick-btn" onclick="sendQuick(this)">How to get from Bangkok to Chiang Mai?</button>
+      <button class="quick-btn" onclick="sendQuick(this)">Budget tips for Italy</button>
+      <button class="quick-btn" onclick="sendQuick(this)">Is Morocco safe for solo travellers?</button>
+      <button class="quick-btn" onclick="sendQuick(this)">Must-try foods in Vietnam</button>
+      <button class="quick-btn" onclick="sendQuick(this)">Best hiking destinations in South America</button>
+    </div>
+    <button class="btn-ghost" style="width:100%;margin-top:auto;" onclick="clearChat()">🗑 Clear</button>
+  </div>
+
+  <!-- Main chat -->
+  <div class="chat-main-panel">
+    <div class="chat-messages-wrap" id="chatMessages">
+      <div class="cmsg cmsg-ai">
+        <div class="cmsg-avatar">✦</div>
+        <div class="cmsg-bubble">
+          <p>Hello! I'm your AI travel companion, powered by Ollama. 🌍</p>
+          <p>I know your travel history and preferences from our Memento memory layer, so ask away — I'll give you personalised answers. Where are you headed?</p>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <div class="chat-input-inner">
+        <textarea id="chatInput" placeholder="Ask anything about travel…" rows="1"
+                  onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      <p class="chat-hint">Ollama · Enter to send · Shift+Enter for new line · Memento memory active</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let chatHistory = [];
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+function handleKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function sendQuick(btn) {
+  document.getElementById('chatInput').value = btn.textContent;
+  sendMessage();
+}
+function clearChat() {
+  chatHistory = [];
+  document.getElementById('chatMessages').innerHTML = `
+    <div class="cmsg cmsg-ai">
+      <div class="cmsg-avatar">✦</div>
+      <div class="cmsg-bubble"><p>Chat cleared! Ask me about your next adventure. 🌏</p></div>
+    </div>`;
+}
+function addMsg(role, text) {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `cmsg cmsg-${role==='user'?'user':'ai'}`;
+  const formatted = text.replace(/\n\n/g,'</p><p>').replace(/\n- /g,'<br>• ').replace(/\n/g,'<br>');
+  div.innerHTML = role==='user'
+    ? `<div class="cmsg-bubble"><p>${formatted}</p></div>`
+    : `<div class="cmsg-avatar">✦</div><div class="cmsg-bubble"><p>${formatted}</p></div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function addTyping() {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'cmsg cmsg-ai'; div.id = 'typing';
+  div.innerHTML = `<div class="cmsg-avatar">✦</div><div class="cmsg-bubble typing-bubble"><span></span><span></span><span></span></div>`;
+  wrap.appendChild(div); wrap.scrollTop = wrap.scrollHeight;
+}
+function removeTyping() { const el=document.getElementById('typing'); if(el) el.remove(); }
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+  addMsg('user', text);
+  chatHistory.push({role:'user',content:text});
+  addTyping();
+  try {
+    const res = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:text,history:chatHistory.slice(-10)})});
+    const data = await res.json();
+    removeTyping();
+    if(data.error) throw new Error(data.error);
+    addMsg('assistant', data.reply);
+    chatHistory.push({role:'assistant',content:data.reply});
+  } catch(err) {
+    removeTyping();
+    addMsg('assistant','⚠ '+err.message);
+  } finally {
+    document.getElementById('sendBtn').disabled=false;
+    document.getElementById('chatInput').focus();
+  }
+}
+</script>
+</body>
+</html>
